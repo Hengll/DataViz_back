@@ -179,3 +179,20 @@ export const logout = async (req, res) => {
     })
   }
 }
+
+export const admingetProfile = async (req, res) => {
+  try {
+    const result = await User.find()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
+  }
+}

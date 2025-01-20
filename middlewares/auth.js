@@ -1,6 +1,7 @@
 import passport from 'passport'
 import { StatusCodes } from 'http-status-codes'
 import jsonwebtoken from 'jsonwebtoken'
+import UserRole from '../enums/UserRole.js'
 
 export const login = (req, res, next) => {
   passport.authenticate('login', { session: false }, (err, user, info) => {
@@ -51,4 +52,15 @@ export const jwt = (req, res, next) => {
     req.token = data.token
     next()
   })(req, res, next)
+}
+
+export const admin = (req, res, next) => {
+  if (req.user.role !== UserRole.ADMIN) {
+    res.status(StatusCodes.FORBIDDEN).json({
+      success: false,
+      message: 'userPermissionDenied',
+    })
+  } else {
+    next()
+  }
 }
