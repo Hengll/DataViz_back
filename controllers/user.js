@@ -47,11 +47,129 @@ export const login = async (req, res) => {
       message: '',
       result: {
         token,
+        _id: req.user._id,
         account: req.user.account,
         userName: req.user.userName,
         userInfo: req.user.userInfo,
+        avatar: req.user.avatar,
         role: req.user.role,
       },
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
+  }
+}
+
+export const getProfile = async (req, res) => {
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: '',
+    result: {
+      _id: req.user._id,
+      account: req.user.account,
+      userName: req.user.userName,
+      userInfo: req.user.userInfo,
+      avatar: req.user.avatar,
+      role: req.user.role,
+    },
+  })
+}
+
+export const getProfileById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).orFail(new Error('NOT FOUND'))
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result: {
+        userName: user.userName,
+        userInfo: user.userInfo,
+        avatar: user.avatar,
+      },
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'userNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const editProfile = async (req, res) => {
+  try {
+    req.user.userName = req.body.userName
+    req.user.userInfo = req.body.userInfo
+    req.user.avatar = req.file?.path || req.user.avatar
+
+    await req.user.save()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result: {
+        account: req.user.account,
+        userName: req.user.userName,
+        userInfo: req.user.userInfo,
+        avatar: req.user.avatar,
+        role: req.user.role,
+      },
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    if (err.name === 'ValidationError') {
+      const key = Object.keys(err.errors)[0]
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: err.errors[key].message,
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const refresh = async (req, res) => {
+  try {
+    const idx = req.user.tokens.findIndex((token) => token === req.token)
+    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
+    req.user.tokens[idx] = token
+    await req.user.save()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result: token,
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
+  }
+}
+
+export const logout = async (req, res) => {
+  try {
+    const idx = req.user.tokens.findIndex((token) => token === req.token)
+    req.user.tokens.splice(idx, 1)
+    await req.user.save()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
     })
   } catch (err) {
     console.log('err : controllers/user.js\n', err)

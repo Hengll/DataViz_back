@@ -42,6 +42,10 @@ const schema = new Schema(
       type: String,
       default: '',
     },
+    avatar: {
+      type: String,
+      default: '',
+    },
     tokens: {
       type: [String],
     },
