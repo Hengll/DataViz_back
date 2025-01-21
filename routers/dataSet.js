@@ -6,6 +6,7 @@ const router = Router()
 
 router.post('/', auth.jwt, dataSet.create)
 router.get('/getDataName', auth.jwt, dataSet.getDataName)
-router.get('/getDataName/:id', auth.jwt, dataSet.getDataNameById)
+router.get('/getData/:id', auth.jwt, dataSet.getDataById)
+router.patch('/editData/:id', auth.jwt, dataSet.editDataById)
 
 export default router

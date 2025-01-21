@@ -1,5 +1,6 @@
 import DataSet from '../models/dataSet.js'
 import { StatusCodes } from 'http-status-codes'
+import zlib from 'zlib'
 
 export const create = async (req, res) => {
   try {
@@ -47,11 +48,60 @@ export const getDataName = async (req, res) => {
   }
 }
 
-export const getDataNameById = async (req, res) => {
+export const getDataById = async (req, res) => {
   try {
     const result = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
-      'NOT_FOUND',
+      new Error('NOT FOUND'),
     )
+
+    const decompressedData = await new Promise((resolve, reject) => {
+      zlib.gunzip(result[0].data.buffer, (err, data) => {
+        if (err) {
+          reject(new Error('gunzipFAIL'))
+        } else {
+          resolve(JSON.parse(data.toString()))
+        }
+      })
+    })
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result: {
+        dataName: result[0].dataName,
+        data: decompressedData,
+      },
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.message === 'gunzipFAIL') {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'gunzipFAIL',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dataSetNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const editDataById = async (req, res) => {
+  try {
+    const result = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
+      new Error('NOT FOUND'),
+    )
+
+    result.dataName = req.body.dataName
+    result.data = req.body.data
+    result.save()
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -60,5 +110,16 @@ export const getDataNameById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
+    if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dataSetNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
   }
 }

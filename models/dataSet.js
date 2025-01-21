@@ -1,5 +1,5 @@
-import { Schema, model, ObjectId } from 'mongoose'
-import validator from 'validator'
+import { Schema, model, ObjectId, Mixed } from 'mongoose'
+import zlib from 'zlib'
 
 const schema = new Schema(
   {
@@ -8,11 +8,13 @@ const schema = new Schema(
       required: [true, 'dataNameRequired'],
     },
     data: {
-      type: String,
+      type: Mixed,
       required: [true, 'dataRequired'],
       validate: {
         validator(value) {
-          return validator.isJSON(value)
+          return (
+            Array.isArray(value) && value.every((item) => typeof item === 'object' && item !== null)
+          )
         },
         message: 'dataFormatError',
       },
@@ -29,9 +31,19 @@ const schema = new Schema(
   },
 )
 
-schema.virtual('dataAttribute').get(function () {
+schema.pre('save', function (next) {
   const dataSet = this
-  return Object.keys(JSON.parse(dataSet.data))
+
+  zlib.gzip(JSON.stringify(dataSet.data), (err, compressedData) => {
+    if (err) {
+      console.log('gzip fail', err)
+      next()
+    } else {
+      console.log('gzip success')
+      dataSet.data = compressedData
+      next()
+    }
+  })
 })
 
 export default model('dataSet', schema)
