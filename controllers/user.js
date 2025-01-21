@@ -1,6 +1,7 @@
 import User from '../models/user.js'
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
+import validator from 'validator'
 
 export const create = async (req, res) => {
   try {
@@ -81,6 +82,7 @@ export const getProfile = async (req, res) => {
 
 export const getProfileById = async (req, res) => {
   try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const user = await User.findById(req.params.id).orFail(new Error('NOT FOUND'))
     res.status(StatusCodes.OK).json({
       success: true,
@@ -93,7 +95,12 @@ export const getProfileById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/user.js\n', err)
-    if (err.message === 'NOT FOUND') {
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'userIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: 'userNotFound',

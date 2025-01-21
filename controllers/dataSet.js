@@ -1,5 +1,6 @@
 import DataSet from '../models/dataSet.js'
 import { StatusCodes } from 'http-status-codes'
+import validator from 'validator'
 import zlib from 'zlib'
 
 export const create = async (req, res) => {
@@ -50,6 +51,7 @@ export const getDataName = async (req, res) => {
 
 export const getDataById = async (req, res) => {
   try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
       new Error('NOT FOUND'),
     )
@@ -75,7 +77,12 @@ export const getDataById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'gunzipFAIL') {
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dataSetIdInvalid',
+      })
+    } else if (err.message === 'gunzipFAIL') {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: 'gunzipFAIL',
@@ -96,6 +103,7 @@ export const getDataById = async (req, res) => {
 
 export const editDataById = async (req, res) => {
   try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
       new Error('NOT FOUND'),
     )
@@ -112,7 +120,12 @@ export const editDataById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'NOT FOUND') {
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dataSetIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: 'dataSetNotFound',
@@ -128,6 +141,7 @@ export const editDataById = async (req, res) => {
 
 export const deleteDataById = async (req, res) => {
   try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     await DataSet.findOneAndDelete({
       user: req.user._id,
       _id: req.params.id,
@@ -139,7 +153,12 @@ export const deleteDataById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'NOT FOUND') {
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dataSetIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: 'dataSetNotFound',

@@ -5,6 +5,8 @@ import * as auth from '../middlewares/auth.js'
 const router = Router()
 
 router.post('/', auth.jwt, dashboard.create)
+router.get('/getAll', dashboard.getAll)
+router.get('/get/:id', dashboard.getById)
 // router.get('/getDataName', auth.jwt, table.getDataName)
 // router.get('/getData/:id', auth.jwt, table.getDataById)
 // router.patch('/editData/:id', auth.jwt, table.editDataById)

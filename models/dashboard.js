@@ -40,43 +40,49 @@ const chartSchema = Schema({
   },
 })
 
-const schema = Schema({
-  dashboardName: {
-    type: String,
-    required: [true, 'dashboardNameRequired'],
+const schema = Schema(
+  {
+    dashboardName: {
+      type: String,
+      required: [true, 'dashboardNameRequired'],
+    },
+    dashboardInfo: {
+      type: String,
+      default: '',
+    },
+    image: {
+      type: String,
+      default: '',
+    },
+    public: {
+      type: Boolean,
+      default: 0,
+    },
+    good: {
+      type: Number,
+      default: 0,
+    },
+    view: {
+      type: Number,
+      default: 0,
+    },
+    dataSet: {
+      type: ObjectId,
+      ref: 'dataSet',
+    },
+    charts: {
+      type: [chartSchema],
+    },
+    user: {
+      type: ObjectId,
+      ref: 'user',
+      required: [true, 'userIdRequired'],
+    },
   },
-  dashboardInfo: {
-    type: String,
-    default: '',
+  {
+    versionKey: false,
+    timestamps: true,
   },
-  image: {
-    type: String,
-    default: '',
-  },
-  public: {
-    type: Boolean,
-    default: 0,
-  },
-  good: {
-    type: Number,
-    default: 0,
-  },
-  view: {
-    type: Number,
-    default: 0,
-  },
-  dataSet: {
-    type: ObjectId,
-    ref: 'dataSet',
-  },
-  charts: {
-    type: [chartSchema],
-  },
-  user: {
-    type: ObjectId,
-    ref: 'user',
-    required: [true, 'userIdRequired'],
-  },
-})
+)
 
 export default model('dashboard', schema)
