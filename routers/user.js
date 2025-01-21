@@ -13,6 +13,6 @@ router.patch('/profile/edit', auth.jwt, upload, user.editProfile)
 router.patch('/refresh', auth.jwt, user.refresh)
 router.delete('/logout', auth.jwt, user.logout)
 
-router.get('/admin', auth.jwt, auth.admin, user.admingetProfile)
+router.get('/admin', auth.jwt, auth.admin, user.adminGetProfile)
 
 export default router

@@ -180,7 +180,7 @@ export const logout = async (req, res) => {
   }
 }
 
-export const admingetProfile = async (req, res) => {
+export const adminGetProfile = async (req, res) => {
   try {
     const result = await User.find()
     res.status(StatusCodes.OK).json({

@@ -95,7 +95,7 @@ export const getDataById = async (req, res) => {
 
 export const editDataById = async (req, res) => {
   try {
-    const result = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
+    const [result] = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
       new Error('NOT FOUND'),
     )
 
@@ -121,5 +121,50 @@ export const editDataById = async (req, res) => {
         message: 'serverError',
       })
     }
+  }
+}
+
+export const deleteDataById = async (req, res) => {
+  try {
+    await DataSet.findOneAndDelete({
+      user: req.user._id,
+      _id: req.params.id,
+    }).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dataSetNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const adminGetData = async (req, res) => {
+  try {
+    const result = await DataSet.find(null, { data: 0 })
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
   }
 }
