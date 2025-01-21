@@ -7,6 +7,10 @@ const schema = new Schema(
       type: String,
       required: [true, 'dataNameRequired'],
     },
+    dataInfo: {
+      type: String,
+      default: '',
+    },
     data: {
       type: Mixed,
       required: [true, 'dataRequired'],

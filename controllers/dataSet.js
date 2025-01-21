@@ -50,12 +50,12 @@ export const getDataName = async (req, res) => {
 
 export const getDataById = async (req, res) => {
   try {
-    const result = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
+    const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
       new Error('NOT FOUND'),
     )
 
     const decompressedData = await new Promise((resolve, reject) => {
-      zlib.gunzip(result[0].data.buffer, (err, data) => {
+      zlib.gunzip(result.data.buffer, (err, data) => {
         if (err) {
           reject(new Error('gunzipFAIL'))
         } else {
@@ -68,7 +68,8 @@ export const getDataById = async (req, res) => {
       success: true,
       message: '',
       result: {
-        dataName: result[0].dataName,
+        dataName: result.dataName,
+        dataInfo: result.dataInfo,
         data: decompressedData,
       },
     })
@@ -95,11 +96,12 @@ export const getDataById = async (req, res) => {
 
 export const editDataById = async (req, res) => {
   try {
-    const [result] = await DataSet.find({ user: req.user._id, _id: req.params.id }).orFail(
+    const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
       new Error('NOT FOUND'),
     )
 
     result.dataName = req.body.dataName
+    result.dataInfo = req.body.dataInfo
     result.data = req.body.data
     result.save()
 
