@@ -82,7 +82,7 @@ export const getProfile = async (req, res) => {
 export const editProfile = async (req, res) => {
   try {
     req.user.userName = req.body.userName
-    req.user.userInfo = req.body.userInfo
+    req.user.userInfo = req.body.userInfo || req.user.userInfo
     req.user.avatar = req.file?.path || req.user.avatar
 
     await req.user.save()

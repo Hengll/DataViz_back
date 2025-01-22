@@ -51,6 +51,11 @@ schema.pre('save', function (next) {
   })
 })
 
+// 壓縮 data (findOneAndUpdate)
+schema.post('findOneAndUpdate', async function (result) {
+  await result.save()
+})
+
 // 解壓縮 data
 schema.post('findOne', async function (result) {
   try {

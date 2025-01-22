@@ -51,10 +51,9 @@ export const getDataName = async (req, res) => {
 export const getDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    const result = await DataSet.findOne(
-      { user: req.user._id, _id: req.params.id },
-      { user: 0 },
-    ).orFail(new Error('NOT FOUND'))
+    const result = await DataSet.findOne({ _id: req.params.id }, { user: 0 }).orFail(
+      new Error('NOT FOUND'),
+    )
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -85,24 +84,17 @@ export const getDataById = async (req, res) => {
 export const editDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    const result = await DataSet.findOne({
-      user: req.user._id,
-      _id: req.params.id,
+    await DataSet.findOneAndUpdate({ _id: req.params.id }, req.body, {
+      runValidators: true,
     }).orFail(new Error('NOT FOUND'))
-
-    result.dataName = req.body.dataName
-    result.dataInfo = req.body.dataInfo
-    result.data = req.body.data
-    result.save()
 
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result,
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dataSetIdInvalid',
@@ -131,10 +123,7 @@ export const editDataById = async (req, res) => {
 export const deleteDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    await DataSet.findOneAndDelete({
-      user: req.user._id,
-      _id: req.params.id,
-    }).orFail(new Error('NOT FOUND'))
+    await DataSet.findByIdAndDelete(req.params.id).orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
       success: true,

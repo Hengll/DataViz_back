@@ -10,6 +10,7 @@ router.get('/public/:id', dashboard.getPublicById)
 router.get('/public/user/:id', dashboard.getPublicByUserId)
 router.get('/', auth.jwt, dashboard.getAll)
 router.get('/:id', auth.jwt, dashboard.getById)
+router.patch('/:id', auth.jwt, dashboard.editById)
 
 // router.get('/admin', auth.jwt, auth.admin, table.adminGetData)
 

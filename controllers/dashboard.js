@@ -157,7 +157,7 @@ export const getById = async (req, res) => {
       { _id: req.params.id },
       { image: 0, good: 0, view: 0, user: 0 },
     )
-      .populate({ path: 'dataSet' })
+      .populate({ path: 'dataSet', select: 'dataName data dataInfo' })
       .orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
@@ -176,6 +176,45 @@ export const getById = async (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: 'dashboardNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const editById = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    await Dashboard.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+      new: true,
+    }).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.name === 'CastError' || err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dashboardIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dashboardNotFound',
+      })
+    } else if (err.name === 'ValidationError') {
+      const key = Object.keys(err.errors)[0]
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: err.errors[key].message,
       })
     } else {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
