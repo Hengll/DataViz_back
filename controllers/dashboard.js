@@ -34,7 +34,7 @@ export const getAll = async (req, res) => {
   try {
     const result = await Dashboard.find(
       { public: true },
-      { dashboardInfo: 0, charts: 0, public: 0 },
+      { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0 },
     ).populate({ path: 'user', select: 'userName' })
 
     res.status(StatusCodes.OK).json({
@@ -58,10 +58,13 @@ export const getById = async (req, res) => {
       { public: true, _id: req.params.id },
       { image: 0, public: 0 },
     )
-      .populate({
-        path: 'user',
-        select: 'userName',
-      })
+      .populate([
+        { path: 'dataSet', select: 'data' },
+        {
+          path: 'user',
+          select: 'userName',
+        },
+      ])
       .orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
@@ -90,4 +93,93 @@ export const getById = async (req, res) => {
   }
 }
 
-export const getAllByUserId = async (req, res) => {}
+export const getAllByUserId = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    const result = await Dashboard.find(
+      { public: true, user: req.params.id },
+      { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, user: 0 },
+    ).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dashboardIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dashboardNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const getAllWithPrivate = async (req, res) => {
+  try {
+    const result = await Dashboard.find(
+      { user: req.user._id },
+      { dashboardInfo: 0, charts: 0, dataSet: 0, user: 0 },
+    )
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
+  }
+}
+
+export const getWithPrivate = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    const result = await Dashboard.findOne(
+      { _id: req.params.id },
+      { image: 0, good: 0, view: 0, user: 0 },
+    )
+      .populate({ path: 'dataSet' })
+      .orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dashboardIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dashboardNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}

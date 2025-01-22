@@ -1,4 +1,5 @@
 import { Schema, model, ObjectId, Mixed } from 'mongoose'
+import zlib from 'zlib'
 
 const chartSchema = Schema({
   category: {
@@ -84,5 +85,25 @@ const schema = Schema(
     timestamps: true,
   },
 )
+
+// 如果有取 data 解壓縮 data
+schema.post('findOne', async function (result) {
+  try {
+    if (result.dataSet?.data) {
+      const decompressedData = await new Promise((resolve, reject) => {
+        zlib.gunzip(result.dataSet.data.buffer, (err, data) => {
+          if (err) {
+            reject(new Error('gzip fail'))
+          } else {
+            resolve(JSON.parse(data.toString()))
+          }
+        })
+      })
+      result.dataSet.data = decompressedData
+    }
+  } catch (err) {
+    console.log(err)
+  }
+})
 
 export default model('dashboard', schema)

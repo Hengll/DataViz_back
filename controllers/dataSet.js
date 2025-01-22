@@ -1,7 +1,6 @@
 import DataSet from '../models/dataSet.js'
 import { StatusCodes } from 'http-status-codes'
 import validator from 'validator'
-import zlib from 'zlib'
 
 export const create = async (req, res) => {
   try {
@@ -56,23 +55,13 @@ export const getDataById = async (req, res) => {
       new Error('NOT FOUND'),
     )
 
-    const decompressedData = await new Promise((resolve, reject) => {
-      zlib.gunzip(result.data.buffer, (err, data) => {
-        if (err) {
-          reject(new Error('gunzipFAIL'))
-        } else {
-          resolve(JSON.parse(data.toString()))
-        }
-      })
-    })
-
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: {
         dataName: result.dataName,
         dataInfo: result.dataInfo,
-        data: decompressedData,
+        data: result.data,
       },
     })
   } catch (err) {
