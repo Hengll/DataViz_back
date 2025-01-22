@@ -35,7 +35,7 @@ const schema = new Schema(
   },
 )
 
-// 壓縮 data
+// 壓縮 data (save)
 schema.pre('save', function (next) {
   const dataSet = this
 
@@ -57,7 +57,7 @@ schema.post('findOne', async function (result) {
     const decompressedData = await new Promise((resolve, reject) => {
       zlib.gunzip(result.data.buffer, (err, data) => {
         if (err) {
-          reject(new Error('gzip fail'))
+          reject(new Error('gunzip fail'))
         } else {
           resolve(JSON.parse(data.toString()))
         }

@@ -98,8 +98,10 @@ export const getAllByUserId = async (req, res) => {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await Dashboard.find(
       { public: true, user: req.params.id },
-      { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, user: 0 },
-    ).orFail(new Error('NOT FOUND'))
+      { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0 },
+    )
+      .populate({ path: 'user', select: 'userName userInfo avatar' })
+      .orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
       success: true,

@@ -32,7 +32,7 @@ export const create = async (req, res) => {
 
 export const getDataName = async (req, res) => {
   try {
-    const result = await DataSet.find({ user: req.user._id }, 'dataName')
+    const result = await DataSet.find({ user: req.user._id }, 'dataName dataInfo')
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -51,18 +51,15 @@ export const getDataName = async (req, res) => {
 export const getDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
-      new Error('NOT FOUND'),
-    )
+    const result = await DataSet.findOne(
+      { user: req.user._id, _id: req.params.id },
+      { user: 0 },
+    ).orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result: {
-        dataName: result.dataName,
-        dataInfo: result.dataInfo,
-        data: result.data,
-      },
+      result,
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
@@ -70,11 +67,6 @@ export const getDataById = async (req, res) => {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dataSetIdInvalid',
-      })
-    } else if (err.message === 'gunzipFAIL') {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: 'gunzipFAIL',
       })
     } else if (err.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
@@ -93,9 +85,10 @@ export const getDataById = async (req, res) => {
 export const editDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    const result = await DataSet.findOne({ user: req.user._id, _id: req.params.id }).orFail(
-      new Error('NOT FOUND'),
-    )
+    const result = await DataSet.findOne({
+      user: req.user._id,
+      _id: req.params.id,
+    }).orFail(new Error('NOT FOUND'))
 
     result.dataName = req.body.dataName
     result.dataInfo = req.body.dataInfo
@@ -118,6 +111,13 @@ export const editDataById = async (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: 'dataSetNotFound',
+      })
+    } else if (err.name === 'ValidationError') {
+      // 驗證錯誤
+      const key = Object.keys(err.errors)[0]
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: err.errors[key].message,
       })
     } else {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
