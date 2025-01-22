@@ -62,7 +62,7 @@ export const getDataById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dataSetIdInvalid',
@@ -131,7 +131,7 @@ export const deleteDataById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dataSetIdInvalid',

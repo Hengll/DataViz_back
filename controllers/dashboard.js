@@ -74,7 +74,7 @@ export const getPublicById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dashboardIdInvalid',
@@ -110,7 +110,7 @@ export const getPublicByUserId = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dashboardIdInvalid',
@@ -167,7 +167,7 @@ export const getById = async (req, res) => {
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
-    if (err.message === 'ID') {
+    if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'dashboardIdInvalid',
@@ -215,6 +215,36 @@ export const editById = async (req, res) => {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: err.errors[key].message,
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
+export const deleteById = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    await Dashboard.findByIdAndDelete(req.params.id).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+    })
+  } catch (err) {
+    console.log('err : controllers/dataSet.js\n', err)
+    if (err.name === 'CastError' || err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'dataSetIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'dataSetNotFound',
       })
     } else {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
