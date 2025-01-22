@@ -30,7 +30,7 @@ export const create = async (req, res) => {
   }
 }
 
-export const getAll = async (req, res) => {
+export const getPublic = async (req, res) => {
   try {
     const result = await Dashboard.find(
       { public: true },
@@ -51,7 +51,7 @@ export const getAll = async (req, res) => {
   }
 }
 
-export const getById = async (req, res) => {
+export const getPublicById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await Dashboard.findOne(
@@ -93,7 +93,7 @@ export const getById = async (req, res) => {
   }
 }
 
-export const getAllByUserId = async (req, res) => {
+export const getPublicByUserId = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await Dashboard.find(
@@ -129,7 +129,7 @@ export const getAllByUserId = async (req, res) => {
   }
 }
 
-export const getAllWithPrivate = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const result = await Dashboard.find(
       { user: req.user._id },
@@ -150,7 +150,7 @@ export const getAllWithPrivate = async (req, res) => {
   }
 }
 
-export const getWithPrivate = async (req, res) => {
+export const getById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await Dashboard.findOne(

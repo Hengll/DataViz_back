@@ -5,15 +5,11 @@ import * as auth from '../middlewares/auth.js'
 const router = Router()
 
 router.post('/', auth.jwt, dashboard.create)
-router.get('/getAll', dashboard.getAll)
-router.get('/get/:id', dashboard.getById)
-router.get('/getAll/:id', dashboard.getAllByUserId)
-router.get('/getAllWithPrivate', auth.jwt, dashboard.getAllWithPrivate)
-router.get('/getWithPrivate/:id', auth.jwt, dashboard.getWithPrivate)
-// router.get('/getDataName', auth.jwt, table.getDataName)
-// router.get('/getData/:id', auth.jwt, table.getDataById)
-// router.patch('/editData/:id', auth.jwt, table.editDataById)
-// router.delete('/deleteData/:id', auth.jwt, table.deleteDataById)
+router.get('/public', dashboard.getPublic)
+router.get('/public/:id', dashboard.getPublicById)
+router.get('/public/user/:id', dashboard.getPublicByUserId)
+router.get('/', auth.jwt, dashboard.getAll)
+router.get('/:id', auth.jwt, dashboard.getById)
 
 // router.get('/admin', auth.jwt, auth.admin, table.adminGetData)
 
