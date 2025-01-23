@@ -47,7 +47,6 @@ export const login = async (req, res) => {
       message: '',
       result: {
         token,
-        _id: req.user._id,
         account: req.user.account,
         userName: req.user.userName,
         userInfo: req.user.userInfo,
@@ -69,7 +68,6 @@ export const getProfile = async (req, res) => {
     success: true,
     message: '',
     result: {
-      _id: req.user._id,
       account: req.user.account,
       userName: req.user.userName,
       userInfo: req.user.userInfo,
