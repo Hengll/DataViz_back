@@ -16,9 +16,7 @@ const schema = new Schema(
       required: [true, 'dataRequired'],
       validate: {
         validator(value) {
-          return (
-            Array.isArray(value) && value.every((item) => typeof item === 'object' && item !== null)
-          )
+          return Array.isArray(value) && value.every((item) => typeof item === 'object')
         },
         message: 'dataFormatError',
       },
@@ -37,27 +35,19 @@ const schema = new Schema(
 
 // 壓縮 data (save)
 schema.pre('save', function (next) {
-  const dataSet = this
-
-  zlib.gzip(JSON.stringify(dataSet.data), (err, compressedData) => {
+  zlib.gzip(JSON.stringify(this.data), (err, compressedData) => {
     if (err) {
       console.log('gzip fail', err)
-      next()
+      next(err)
     } else {
-      console.log('gzip success')
-      dataSet.data = compressedData
+      this.data = compressedData
       next()
     }
   })
 })
 
-// 壓縮 data (findOneAndUpdate)
-schema.post('findOneAndUpdate', async function (result) {
-  await result.save()
-})
-
 // 解壓縮 data
-schema.post('findOne', async function (result) {
+schema.post('findOne', async function (result, next) {
   try {
     const decompressedData = await new Promise((resolve, reject) => {
       zlib.gunzip(result.data.buffer, (err, data) => {
@@ -70,7 +60,8 @@ schema.post('findOne', async function (result) {
     })
     result.data = decompressedData
   } catch (err) {
-    console.log(err)
+    console.log(err.message, err)
+    next(err)
   }
 })
 

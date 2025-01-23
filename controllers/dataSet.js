@@ -51,9 +51,7 @@ export const getDataName = async (req, res) => {
 export const getDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    const result = await DataSet.findOne({ _id: req.params.id }, { user: 0 }).orFail(
-      new Error('NOT FOUND'),
-    )
+    const result = await DataSet.findById(req.params.id, { user: 0 }).orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -84,9 +82,13 @@ export const getDataById = async (req, res) => {
 export const editDataById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    await DataSet.findOneAndUpdate({ _id: req.params.id }, req.body, {
-      runValidators: true,
-    }).orFail(new Error('NOT FOUND'))
+    // 使用 find() 避免觸發解壓縮
+    const [result] = await DataSet.find({ _id: req.params.id }).orFail(new Error('NOT FOUND'))
+
+    result.dataName = req.body.dataName || result.dataName
+    result.data = req.body.data
+    result.dataInfo = req.body.dataInfo || result.dataInfo
+    await result.save()
 
     res.status(StatusCodes.OK).json({
       success: true,

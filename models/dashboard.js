@@ -59,9 +59,12 @@ const schema = Schema(
       type: Boolean,
       default: 0,
     },
-    good: {
+    like: {
       type: Number,
       default: 0,
+    },
+    likeUsers: {
+      type: [ObjectId],
     },
     view: {
       type: Number,
