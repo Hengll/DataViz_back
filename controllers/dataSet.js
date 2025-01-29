@@ -32,7 +32,7 @@ export const create = async (req, res) => {
 
 export const getDataName = async (req, res) => {
   try {
-    const result = await DataSet.find({ user: req.user._id }, 'dataName dataInfo')
+    const result = await DataSet.find({ user: req.user._id }, 'dataName dataInfo createdAt')
 
     res.status(StatusCodes.OK).json({
       success: true,
