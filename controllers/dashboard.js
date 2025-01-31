@@ -134,7 +134,7 @@ export const getAll = async (req, res) => {
     const result = await Dashboard.find(
       { user: req.user._id },
       { dashboardInfo: 0, charts: 0, dataSet: 0, likeUsers: 0, public: 0 },
-    )
+    ).populate({ path: 'user', select: 'userName' })
 
     res.status(StatusCodes.OK).json({
       success: true,
