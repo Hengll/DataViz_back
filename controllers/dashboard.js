@@ -133,7 +133,7 @@ export const getAll = async (req, res) => {
   try {
     const result = await Dashboard.find(
       { user: req.user._id },
-      { dashboardInfo: 0, charts: 0, dataSet: 0, user: 0, likeUsers: 0 },
+      { dashboardInfo: 0, charts: 0, dataSet: 0, likeUsers: 0, public: 0 },
     )
 
     res.status(StatusCodes.OK).json({
