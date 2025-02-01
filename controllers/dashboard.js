@@ -15,7 +15,7 @@ export const create = async (req, res) => {
       },
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
 
     if (err.name === 'ValidationError') {
       // 驗證錯誤
@@ -46,7 +46,7 @@ export const getPublic = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'serverError',
@@ -76,7 +76,7 @@ export const getPublicById = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -112,7 +112,7 @@ export const getPublicByUserId = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -145,7 +145,7 @@ export const getAll = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'serverError',
@@ -175,7 +175,7 @@ export const getById = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -208,7 +208,7 @@ export const editById = async (req, res) => {
       message: '',
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -246,16 +246,16 @@ export const deleteById = async (req, res) => {
       message: '',
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
-        message: 'dataSetIdInvalid',
+        message: 'dashboardIdInvalid',
       })
     } else if (err.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
-        message: 'dataSetNotFound',
+        message: 'dashboardNotFound',
       })
     } else {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -289,7 +289,7 @@ export const likeById = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -328,7 +328,7 @@ export const viewById = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     if (err.name === 'CastError' || err.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -364,7 +364,7 @@ export const adminGetAll = async (req, res) => {
       result,
     })
   } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
+    console.log('err : controllers/dashboard.js\n', err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'serverError',
