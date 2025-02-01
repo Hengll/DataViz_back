@@ -6,10 +6,13 @@ export const create = async (req, res) => {
   try {
     req.body.user = req.user._id
 
-    await Dashboard.create(req.body)
+    const result = await Dashboard.create(req.body)
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
+      result: {
+        _id: result._id,
+      },
     })
   } catch (err) {
     console.log('err : controllers/dataSet.js\n', err)
