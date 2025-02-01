@@ -45,7 +45,7 @@ const schema = Schema(
   {
     dashboardName: {
       type: String,
-      required: [true, 'dashboardNameRequired'],
+      default: 'Untitled',
     },
     dashboardInfo: {
       type: String,
