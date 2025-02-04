@@ -38,7 +38,9 @@ export const getPublic = async (req, res) => {
     const result = await Dashboard.find(
       { public: true },
       { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, likeUsers: 0 },
-    ).populate({ path: 'user', select: 'userName' })
+    )
+      .populate({ path: 'user', select: 'userName' })
+      .sort({ createdAt: -1 })
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -104,6 +106,7 @@ export const getPublicByUserId = async (req, res) => {
       { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, likeUsers: 0 },
     )
       .populate({ path: 'user', select: 'userName userInfo avatar' })
+      .sort({ createdAt: -1 })
       .orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
@@ -137,7 +140,9 @@ export const getAll = async (req, res) => {
     const result = await Dashboard.find(
       { user: req.user._id },
       { dashboardInfo: 0, charts: 0, dataSet: 0, likeUsers: 0, public: 0 },
-    ).populate({ path: 'user', select: 'userName' })
+    )
+      .populate({ path: 'user', select: 'userName' })
+      .sort({ createdAt: -1 })
 
     res.status(StatusCodes.OK).json({
       success: true,
