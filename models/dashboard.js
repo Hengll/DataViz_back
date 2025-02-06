@@ -35,9 +35,9 @@ const chartSchema = Schema({
   chartOption: {
     type: Mixed,
   },
-  useAttribute: {
+  useVariables: {
     type: [String],
-    required: [true, 'useAttributeRequired'],
+    required: [true, 'useVariablesRequired'],
   },
 })
 
