@@ -39,9 +39,10 @@ app.use(
   }),
 )
 
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }))
 // eslint-disable-next-line no-unused-vars
 app.use((error, req, res, next) => {
+  console.log(error)
   res.status(StatusCodes.BAD_REQUEST).json({
     success: false,
     message: 'requestFormatError',
