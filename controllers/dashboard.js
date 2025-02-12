@@ -203,6 +203,8 @@ export const getById = async (req, res) => {
 export const editById = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+
+    req.body.charts = JSON.parse(req.body.charts)
     await Dashboard.findOneAndUpdate({ user: req.user._id, _id: req.params.id }, req.body, {
       runValidators: true,
       new: true,
