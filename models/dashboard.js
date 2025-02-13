@@ -58,7 +58,7 @@ const schema = Schema(
     },
     public: {
       type: Boolean,
-      default: 0,
+      default: false,
     },
     like: {
       type: Number,
