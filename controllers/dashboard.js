@@ -35,17 +35,41 @@ export const create = async (req, res) => {
 
 export const getPublic = async (req, res) => {
   try {
-    const result = await Dashboard.find(
-      { public: true },
-      { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, likeUsers: 0 },
-    )
-      .populate({ path: 'user', select: 'userName' })
-      .sort({ createdAt: -1 })
+    let result
+    if (req.query.search) {
+      const resultBySearch = await Dashboard.find(
+        { public: true },
+        { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, likeUsers: 0 },
+      )
+        .populate({ path: 'user', select: 'userName' })
+        .sort({ [req.query.sort]: -1 })
 
+      resultBySearch.filter((val) => {
+        val.dashboardName.toLowerCase().includes(req.query.search.toLowerCase()) ||
+          val.user.userName.toLowerCase().includes(req.query.search.toLowerCase())
+      })
+      result = resultBySearch.slice(
+        (req.query.page - 1) * req.query.limit + 1,
+        (req.query.page - 1) * req.query.limit + 1 + req.query.limit,
+      )
+    } else {
+      result = await Dashboard.find(
+        { public: true },
+        { dashboardInfo: 0, charts: 0, public: 0, dataSet: 0, likeUsers: 0 },
+      )
+        .populate({ path: 'user', select: 'userName' })
+        .sort({ [req.query.sort]: -1 })
+        .skip((req.query.page - 1) * req.query.limit)
+        .limit(req.query.limit)
+    }
+
+    // public資料筆數
+    const numsOfData = await Dashboard.countDocuments({ public: true })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result,
+      numsOfData,
     })
   } catch (err) {
     console.log('err : controllers/dashboard.js\n', err)
