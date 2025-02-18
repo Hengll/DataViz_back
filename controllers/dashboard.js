@@ -61,7 +61,7 @@ export const getPublicById = async (req, res) => {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
     const result = await Dashboard.findOne(
       { public: true, _id: req.params.id },
-      { image: 0, public: 0, likeUsers: 0 },
+      { image: 0, public: 0 },
     )
       .populate([
         { path: 'dataSet', select: 'data' },
@@ -295,7 +295,6 @@ export const likeById = async (req, res) => {
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result,
     })
   } catch (err) {
     console.log('err : controllers/dashboard.js\n', err)
