@@ -44,14 +44,21 @@ export const getPublic = async (req, res) => {
         .populate({ path: 'user', select: 'userName' })
         .sort({ [req.query.sort]: -1 })
 
-      resultBySearch.filter((val) => {
-        val.dashboardName.toLowerCase().includes(req.query.search.toLowerCase()) ||
-          val.user.userName.toLowerCase().includes(req.query.search.toLowerCase())
-      })
-      result = resultBySearch.slice(
-        (req.query.page - 1) * req.query.limit + 1,
-        (req.query.page - 1) * req.query.limit + 1 + req.query.limit,
-      )
+      result = resultBySearch
+        .filter((val) => {
+          if (
+            val.dashboardName.toLowerCase().includes(req.query.search.toLowerCase()) ||
+            val.user.userName.toLowerCase().includes(req.query.search.toLowerCase())
+          ) {
+            return true
+          } else {
+            return false
+          }
+        })
+        .slice(
+          (req.query.page - 1) * req.query.limit,
+          (req.query.page - 1) * req.query.limit + req.query.limit,
+        )
     } else {
       result = await Dashboard.find(
         { public: true },
