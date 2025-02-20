@@ -26,6 +26,7 @@ const chartSchema = Schema({
         'standardDeviation',
         'categoryFilter',
         'rangeFilter',
+        'textbox',
         'rectangle',
         'circle',
         'triangle',
