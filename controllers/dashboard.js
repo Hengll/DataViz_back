@@ -196,8 +196,6 @@ export const getById = async (req, res) => {
       { user: req.user._id, _id: req.params.id },
       {
         image: 0,
-        like: 0,
-        view: 0,
         user: 0,
         likeUsers: 0,
       },
