@@ -10,7 +10,17 @@ cloudinary.config({
 })
 
 const upload = multer({
-  storage: new CloudinaryStorage({ cloudinary }),
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: async (req) => {
+      return {
+        asset_folder: 'DataViz/Avatar',
+        resource_type: 'image',
+        public_id: req.user._id,
+        overwrite: true,
+      }
+    },
+  }),
   // 過濾上傳檔案
   // file = 檔案資訊
   // callback(錯誤, 是否允許)

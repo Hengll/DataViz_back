@@ -138,7 +138,7 @@ export const getPublicByUserId = async (req, res) => {
     )
       .populate({ path: 'user', select: 'userName userInfo avatar' })
       .sort({ createdAt: -1 })
-      .orFail(new Error('NOT FOUND'))
+    // .orFail(new Error('NOT FOUND'))
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -152,12 +152,14 @@ export const getPublicByUserId = async (req, res) => {
         success: false,
         message: 'dashboardIdInvalid',
       })
-    } else if (err.message === 'NOT FOUND') {
-      res.status(StatusCodes.NOT_FOUND).json({
-        success: false,
-        message: 'dashboardNotFound',
-      })
-    } else {
+    }
+    // else if (err.message === 'NOT FOUND') {
+    //   res.status(StatusCodes.NOT_FOUND).json({
+    //     success: false,
+    //     message: 'dashboardNotFound',
+    //   })
+    // }
+    else {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: 'serverError',
