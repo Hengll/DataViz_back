@@ -76,6 +76,10 @@ const schema = Schema(
       type: String,
       default: '',
     },
+    backgroundColor: {
+      type: String,
+      default: '#FFFFFF',
+    },
     image: {
       type: String,
       default: '',
