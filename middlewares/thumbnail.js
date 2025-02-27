@@ -18,7 +18,7 @@ const upload = multer({
         resource_type: 'image',
         public_id: req.params.id,
         overwrite: true,
-        transformation: [{ width: 640, height: 360, crop: 'limit' }],
+        transformation: [{ width: 960, height: 540, crop: 'limit' }],
       }
     },
   }),
