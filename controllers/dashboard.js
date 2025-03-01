@@ -175,7 +175,7 @@ export const getAll = async (req, res) => {
       { dashboardInfo: 0, charts: 0, dataSet: 0, likeUsers: 0, public: 0 },
     )
       .populate({ path: 'user', select: 'userName' })
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
 
     res.status(StatusCodes.OK).json({
       success: true,
