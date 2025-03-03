@@ -205,3 +205,33 @@ export const adminGetProfile = async (req, res) => {
     })
   }
 }
+
+export const adminDeletUser = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    await User.findByIdAndDelete(req.params.id).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+    })
+  } catch (err) {
+    console.log('err : controllers/user.js\n', err)
+    if (err.name === 'CastError' || err.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'userIdInvalid',
+      })
+    } else if (err.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: 'userNotFound',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}

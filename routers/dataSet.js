@@ -4,8 +4,6 @@ import * as auth from '../middlewares/auth.js'
 
 const router = Router()
 
-router.get('/admin', auth.jwt, auth.admin, dataSet.adminGetData)
-
 router.post('/', auth.jwt, dataSet.create)
 router.get('/names', auth.jwt, dataSet.getDataName)
 router.get('/:id', auth.jwt, dataSet.getDataById)

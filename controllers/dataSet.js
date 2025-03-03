@@ -151,21 +151,3 @@ export const deleteDataById = async (req, res) => {
     }
   }
 }
-
-export const adminGetData = async (req, res) => {
-  try {
-    const result = await DataSet.find(null, { data: 0 })
-
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: '',
-      result,
-    })
-  } catch (err) {
-    console.log('err : controllers/dataSet.js\n', err)
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: 'serverError',
-    })
-  }
-}

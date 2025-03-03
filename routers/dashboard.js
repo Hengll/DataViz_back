@@ -6,6 +6,7 @@ import thumbnail from '../middlewares/thumbnail.js'
 const router = Router()
 
 router.get('/admin', auth.jwt, auth.admin, dashboard.adminGetAll)
+router.delete('/admin/:id', auth.jwt, auth.admin, dashboard.adminDeletDashboard)
 
 router.post('/', auth.jwt, dashboard.create)
 router.get('/public', dashboard.getPublic)
