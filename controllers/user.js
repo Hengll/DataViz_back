@@ -53,7 +53,6 @@ export const login = async (req, res) => {
         userName: req.user.userName,
         userInfo: req.user.userInfo,
         avatar: req.user.avatar,
-        role: req.user.role,
       },
     })
   } catch (err) {
@@ -75,7 +74,6 @@ export const getProfile = async (req, res) => {
       userName: req.user.userName,
       userInfo: req.user.userInfo,
       avatar: req.user.avatar,
-      role: req.user.role,
     },
   })
 }
@@ -131,7 +129,6 @@ export const editProfile = async (req, res) => {
         userName: req.user.userName,
         userInfo: req.user.userInfo,
         avatar: req.user.avatar,
-        role: req.user.role,
       },
     })
   } catch (err) {
@@ -186,52 +183,5 @@ export const logout = async (req, res) => {
       success: false,
       message: 'serverError',
     })
-  }
-}
-
-export const adminGetProfile = async (req, res) => {
-  try {
-    const result = await User.find()
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: '',
-      result,
-    })
-  } catch (err) {
-    console.log('err : controllers/user.js\n', err)
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: 'serverError',
-    })
-  }
-}
-
-export const adminDeletUser = async (req, res) => {
-  try {
-    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-    await User.findByIdAndDelete(req.params.id).orFail(new Error('NOT FOUND'))
-
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: '',
-    })
-  } catch (err) {
-    console.log('err : controllers/user.js\n', err)
-    if (err.name === 'CastError' || err.message === 'ID') {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'userIdInvalid',
-      })
-    } else if (err.message === 'NOT FOUND') {
-      res.status(StatusCodes.NOT_FOUND).json({
-        success: false,
-        message: 'userNotFound',
-      })
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: 'serverError',
-      })
-    }
   }
 }

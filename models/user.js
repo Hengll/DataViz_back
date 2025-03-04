@@ -1,7 +1,6 @@
 import { Schema, model, Error } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
-import UserRole from '../enums/UserRole.js'
 
 const schema = new Schema(
   {
@@ -48,10 +47,6 @@ const schema = new Schema(
     },
     tokens: {
       type: [String],
-    },
-    role: {
-      type: Number,
-      default: UserRole.USER,
     },
   },
   {
