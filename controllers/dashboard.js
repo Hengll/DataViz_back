@@ -70,13 +70,10 @@ export const getPublic = async (req, res) => {
         .limit(req.query.limit)
     }
 
-    // public資料筆數
-    const numsOfData = await Dashboard.countDocuments({ public: true })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result,
-      numsOfData,
     })
   } catch (err) {
     console.log('err : controllers/dashboard.js\n', err)
